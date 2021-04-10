@@ -1,0 +1,231 @@
+<body onload="emptyCode();">
+
+    <script src="https://cdn.netpie.io/microgear.js"></script>
+
+    <script type="text/javascript">
+
+        const APPID = "labServo";
+        const KEY = "cE7n1be8BLTJLwl";
+        const SECRET = "08zh2mGyku6tlNOavmezOQGuT";
+
+        const ALIAS = "DigitalOUTPUT_HTML_web"; // ชื่อตัวเอง
+        const thing1 = "NodeMCU1"; // ชื่อเพื่อนที่จะคุย
+
+        function keyPad(num) {
+            
+            switch (num) {
+                case '1':
+                    microgear.chat(thing1, "ON");
+                    break;
+                case '2':
+                    microgear.chat(thing1, "2");
+                    break;
+                case '3':
+                    microgear.chat(thing1, "3");
+                    break;
+                case '4':
+                    microgear.chat(thing1, "4");
+                    break;
+                case '5':
+                    microgear.chat(thing1, "5");
+                    break;
+                case '6':
+                    microgear.chat(thing1, "6");
+                    break;
+                case '7':
+                    microgear.chat(thing1, "7");
+                    break;
+                case '8':
+                    microgear.chat(thing1, "8");
+                    break;
+                case '9':
+                    microgear.chat(thing1, "9");
+                    break;
+                case '0':
+                    microgear.chat(thing1, "0");
+                    break;
+                case '*':   //clear
+                    microgear.chat(thing1, "*");
+                    emptyCode();
+                    break;
+                case '#':   //enter
+                    microgear.chat(thing1, "#");
+                    emptyCode();
+                    break;
+                case 'R':   //reset
+                    microgear.chat(thing1, "R");
+                    document.getElementById("Status").innerHTML = "Enter Old Password";
+		emptyCode();
+                    break;
+                case 'F':   //forget password
+                    microgear.chat(thing1, "F");
+                    document.getElementById("Status").innerHTML = "Send Password To Line...";
+		emptyCode();
+                    break;
+            }
+
+        }
+
+        function switchPress(logic) {
+            if (logic == 1) {
+                microgear.chat(thing1, "ON");
+            } else if (logic == 0) {
+                microgear.chat(thing1, "OFF");
+            }
+        }
+
+        var microgear = Microgear.create({
+            key: KEY,
+            secret: SECRET,
+            alias: ALIAS
+        });
+
+        microgear.on('message', function (topic, data) {
+            if (data == "newPass") {        //ใส่รหัสใหม่
+                document.getElementById("Status").innerHTML = "Enter New Password[5 numbers.]";
+            } else if (data == "wrong") {   //ใส่รหัสผิด
+                document.getElementById("Status").innerHTML = "Wrong! Enter Password Again.";
+            } else if (data == "wrongRe") { //รหัสเก่าตอน reset ผิด
+                document.getElementById("Status").innerHTML = "Wrong! Enter Old Password Again.";
+            } else if (data == "fin") {     //เปลี่ยนรหัสเสร็จแล้ว
+                document.getElementById("Status").innerHTML = "Wrong! Enter Old Password Again.";
+            }
+        });
+
+        microgear.on('connected', function () {
+            microgear.setAlias(ALIAS);
+            document.getElementById("connected_NETPIE").innerHTML = "Connected to NETPIE"
+        });
+
+        microgear.on('present', function (event) {
+            console.log(event);
+        });
+
+        microgear.on('absent', function (event) {
+            console.log(event);
+        });
+
+        microgear.resettoken(function (err) {
+            microgear.connect(APPID);
+        });
+
+        function addCode(key) {
+            var code = document.forms[0].code;
+            code.value = code.value + key;
+        }
+
+        function submitForm() {
+            document.forms[0].submit();
+        }
+
+        function emptyCode() {
+            document.forms[0].code.value = "";
+        }
+
+    </script>
+
+    <style>
+
+        body {
+            text-align: center;
+            background-color: #8e8e8e;
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+        }
+
+        #resetButton {
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #666666;
+            color: #CCCCCC;
+        }
+
+        #forgetButton {
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #666666;
+            color: #CCCCCC;
+        }
+
+        #keypad {
+            margin: auto;
+            margin-top: 20px;
+        }
+
+            #keypad tr td {
+                vertical-align: middle;
+                text-align: center;
+                border: 1px solid #000000;
+                font-size: 18px;
+                font-weight: bold;
+                width: 60px;
+                height: 50px;
+                cursor: pointer;
+                background-color: #666666;
+                color: #CCCCCC;
+            }
+
+                #keypad tr td:hover {
+                    background-color: #999999;
+                    color: #FFFF00;
+                }
+
+        .display {
+            width: 130px;
+            margin: 10px auto auto auto;
+            background-color: #000000;
+            color: #dcdcdc;
+            font-size: 18px;
+            border: 1px solid #999999;
+        }
+
+        #message {
+            text-align: center;
+            color: #009900;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+
+    <form action="code.htm" method="get">
+
+        <center>
+            <h1 id="connected_NETPIE"></h1>
+        </center>
+
+        <table id="keypad" cellpadding="5" cellspacing="3">
+
+            <tr>
+                <td onclick="addCode('1'); keyPad('1');">1</td>
+                <td onclick="addCode('2'); keyPad('2');">2</td>
+                <td onclick="addCode('3'); keyPad('3');">3</td>
+            </tr>
+            <tr>
+                <td onclick="addCode('4'); keyPad('4');">4</td>
+                <td onclick="addCode('5'); keyPad('5');">5</td>
+                <td onclick="addCode('6'); keyPad('6');">6</td>
+            </tr>
+            <tr>
+                <td onclick="addCode('7'); keyPad('7');">7</td>
+                <td onclick="addCode('8'); keyPad('8');">8</td>
+                <td onclick="addCode('9'); keyPad('9');">9</td>
+            </tr>
+            <tr>
+                <td onclick="addCode(''); keyPad('*');">Del</td>
+                <td onclick="addCode('0'); keyPad('0');">0</td>
+                <td onclick="addCode('-'); keyPad('F');">PW?</td>
+            </tr>
+
+        </table>
+        <p><strong id="Status">Enter Password</strong></p>
+        <input type="text" name="code" value="" maxlength="9" class="display" readonly="readonly" />
+     
+
+    </form>    
+    <button id="resetButton" type="button" onclick="keyPad('R');">Reset</button>
+    <button id="forgetButton" type="button" onclick="keyPad('#');">Enter</button>
+
+
+</body>
